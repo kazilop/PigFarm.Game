@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
+    private SpriteRenderer spriteRenderer;
+   // public Sprite sprite;
     public Sprite pigLeft;
     public Sprite pigRight;
     public Sprite pigTop;
@@ -13,30 +14,47 @@ public class Player : MonoBehaviour
     [SerializeField]
     private Joystick joy;
 
-    float speed = 10.0f;
+    float speed = 4.0f;
 
     public string joyspd;
 
-    private float _angleOffset = 90f;
-
     void Start()
     {
-        
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        spriteRenderer.sprite = pigLeft;
     }
 
-    
+
     void Update()
     {
-        if(joy.speed > 0.0f)
+        if (joy.speed > 0.0f)
         {
             Vector2 direction = joy.direction;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(0.0f, 0.0f, angle + _angleOffset);
+            
             transform.Translate(direction * speed * joy.speed * Time.deltaTime, Space.World);
 
-            joyspd = direction.y.ToString();
+            if (angle >= 45 && angle < 135)
+            {
+                spriteRenderer.sprite = pigTop;
+            }
 
+            else if (angle >= 135 || angle < -135)
+            {
+                spriteRenderer.sprite = pigLeft;
+            }
+
+            else if (angle > -135 && angle < -45)
+            {
+                spriteRenderer.sprite = pigBottom;
+            }
+            else  //(angle >= -45 || angle < 45)
+                spriteRenderer.sprite = pigRight;
+
+            joyspd = angle.ToString();
         }
+
+        
 
     }
 }
