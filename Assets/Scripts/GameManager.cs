@@ -5,17 +5,22 @@ public class GameManager : MonoBehaviour
     public StoneScript rockPrefab;
     public Transform parent;
 
+    private GameObject player;
+    public GameObject bomb;
+
     private int rockX = 8;
     private int rockY = 4;
+
+    private Vector3 bombPos;
+    private int bombCount = 3;
+
+    
 
     void Start()
     {
         SetRock();
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
+        player = GameObject.FindGameObjectWithTag("Player");
         
     }
 
@@ -41,4 +46,28 @@ public class GameManager : MonoBehaviour
             ofsetX = ofsetX + 0.3f;
         }
     }
+
+    public void SetBomb()
+    {
+        if (bombCount > 0)
+        {
+
+            bombPos = player.transform.position;
+            Instantiate(bomb, bombPos, Quaternion.identity, parent);
+            bombCount--;
+            
+        }
+
+    }
+
+    public void bombActive()
+    {
+        if(bombCount < 3)
+        {
+            bombCount++;
+        }
+    }
+
+    
 }
+

@@ -12,10 +12,10 @@ public class Joystick : MonoBehaviour
     public Vector2 direction = Vector2.zero;
 
     [SerializeField]
-    private Sprite _activeSprite;
+    private Sprite activeSprite;
 
     [SerializeField]
-    private Sprite _idleSprite;
+    private Sprite idleSprite;
 
 
     Vector2 startPosition = Vector2.zero;
@@ -36,7 +36,7 @@ public class Joystick : MonoBehaviour
     {
         PointerEventData pntr = (PointerEventData)data;
         startPosition = pntr.position;
-        img.sprite = _activeSprite;
+        img.sprite = activeSprite;
     }
 
     public void OnDrag(BaseEventData data)
@@ -64,6 +64,6 @@ public class Joystick : MonoBehaviour
         speed = 0.0f;
         direction = Vector2.zero;
         rectTransform.localPosition = Vector3.zero;
-        img.sprite = _idleSprite;
+        img.sprite = idleSprite;
     }
 }

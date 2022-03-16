@@ -3,7 +3,9 @@ guid: f25fac653e487ff488291c4cb013b063
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - rockPrefab: {fileID: 271661959145719383, guid: 4b0e7d9bdd5162e42a348bc36b663720, type: 3}
+  - parent: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

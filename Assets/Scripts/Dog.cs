@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Dog : MonoBehaviour
@@ -5,8 +6,8 @@ public class Dog : MonoBehaviour
     CapsuleCollider2D capsuleCollider;
 
     public GameObject player;
+    public GameManager gameManager;
 
-    [SerializeField]
     private float mydist;
 
     private Vector3 direction;
@@ -20,15 +21,17 @@ public class Dog : MonoBehaviour
     public Sprite dogBottom;
 
     public Sprite[] angrySprites;
+    public Sprite[] dirtySprites;
 
-    public int dogStatus;  // 0 - Calm,  1 - Angry,  2 - Filthy
-
+    public int dogStatus;  // 0 - Calm,  1 - Angry,  2 - Dirty
+    
 
     void Start()
     {
         capsuleCollider = GetComponent<CapsuleCollider2D>();
 
         spriteRenderer = GetComponent<SpriteRenderer>();
+
         spriteRenderer.sprite = dogRight;
 
         dogStatus = 0;
@@ -49,52 +52,80 @@ public class Dog : MonoBehaviour
         }
 
         mydist = (player.transform.position - transform.position).magnitude;
+
+        
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (capsuleCollider != null)
-        {
-            ChangeDirection();
-        }
+         ChangeDirection();
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        dogStatus = 2;
+        Destroy(collision.gameObject);
+        gameManager.bombActive();        
+        StartCoroutine(WaitDirty());
+        
     }
 
     private void Move()
     {
+        if (dogStatus == 1)
+        {
+            speed = 0.018f;
+        }
+        else
+            speed = 0.009f;
+
+
         transform.Translate(speed * direction, Space.World);
 
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
         if (angle >= 45 && angle < 135)
         {
-            if (dogStatus == 0)
-                spriteRenderer.sprite = dogTop;
-            else if (dogStatus == 1)
+            if (dogStatus == 1)
                 spriteRenderer.sprite = angrySprites[3];
+            else if (dogStatus == 2)
+                spriteRenderer.sprite = dirtySprites[3];
+            else
+                spriteRenderer.sprite = dogTop;
+                        
         }
 
         else if (angle >= 135 || angle < -135)
         {
-            if (dogStatus == 0)
-                spriteRenderer.sprite = dogLeft;
-            else if (dogStatus == 1)
+                   
+            if (dogStatus == 1)
                 spriteRenderer.sprite = angrySprites[1];
+            else if (dogStatus == 2)
+                spriteRenderer.sprite = dirtySprites[1];
+            else
+                spriteRenderer.sprite = dogLeft;
         }
 
         else if (angle > -135 && angle < -45)
         {
-            if (dogStatus == 0)
-                spriteRenderer.sprite = dogBottom;
-            else if (dogStatus == 1)
+               
+            if (dogStatus == 1)
                 spriteRenderer.sprite = angrySprites[2];
+            else if (dogStatus == 2)
+                spriteRenderer.sprite = dirtySprites[2];
+            else
+                spriteRenderer.sprite = dogBottom;
         }
         else
         {
-            if (dogStatus == 0)
-                spriteRenderer.sprite = dogRight;
-            else if (dogStatus == 1)
+            if (dogStatus == 1)
                 spriteRenderer.sprite = angrySprites[0];
+            else if (dogStatus == 2)
+                spriteRenderer.sprite = dirtySprites[0];
+            else
+                spriteRenderer.sprite = dogRight;
         }
+        
     }
 
     void dogCorrection()
@@ -135,7 +166,7 @@ public class Dog : MonoBehaviour
     private void ChangeDirection()
     {
         
-        if (dogStatus == 0)
+        if (dogStatus == 0 || dogStatus == 2)
         {
             direction.x = Random.Range(-8, 8);
             direction.y = Random.Range(-8, 8);
@@ -146,16 +177,19 @@ public class Dog : MonoBehaviour
     private void isPigNear()
     {
        
-        if(mydist < pigDist)
+        if(mydist < pigDist && dogStatus != 2)
         {
             dogStatus = 1;
         
         }
-        else if(mydist > pigDist)
+        else if(mydist > pigDist && dogStatus != 2)
         {
             dogStatus = 0;
         }
     }
+
+    IEnumerator WaitDirty() {
+        yield return new WaitForSeconds(5f); dogStatus = 0; }
 
 }
 
